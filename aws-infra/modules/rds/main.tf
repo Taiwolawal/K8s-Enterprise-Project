@@ -1,0 +1,21 @@
+module "rds" {
+  source               = "terraform-aws-modules/rds/aws"
+  version              = "6.10.0"
+  identifier           = var.identifier
+  create_db_instance   = var.create_db_instance
+  engine               = var.engine
+  engine_version       = var.engine_version
+  instance_class       = var.instance_class
+  db_subnet_group_name = var.db_subnet_group_name
+  allocated_storage    = var.allocated_storage
+  vpc_security_group_ids = var.vpc_security_group_ids
+  db_name              = var.db_name
+  username             = var.username
+  manage_master_user_password             = var.manage_master_user_password
+  port                 = var.port
+  subnet_ids           = var.subnet_ids
+  family               = var.family
+  major_engine_version = var.major_engine_version
+  deletion_protection  = var.deletion_protection
+  tags                 = var.tags
+}

@@ -1,0 +1,4 @@
+aws-infra/.terraform.lock.hcl
+aws-infra/.terraform/*
+aws-infra/terraform.tfstate
+aws-infra/terraform.tfstate.*
