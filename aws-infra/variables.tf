@@ -250,11 +250,6 @@ variable "sg_istio_ingress_with_cidr_blocks" {
   default = []
 }
 
-variable "sg_istio_egress_cidr_blocks" {
-  type    = any
-  default = []
-}
-
 variable "sg_istio_egress_rules" {
   type    = any
   default = []

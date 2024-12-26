@@ -18,3 +18,7 @@ output "database_subnet_group_name" {
 output "security_group_id" {
   value = [module.sg-rds.security_group_id]
 }
+
+output "security_group_id" {
+  value = [module.sg-istio.security_group_id]
+}

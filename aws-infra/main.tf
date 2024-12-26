@@ -184,12 +184,5 @@ module "sg-istio" {
   vpc_id                   = module.vpc.vpc_id
   create                   = var.create
   ingress_with_cidr_blocks = var.sg_istio_ingress_with_cidr_blocks
-  egress_cidr_blocks       = var.sg_istio_egress_cidr_blocks
   egress_rules             = var.sg_istio_egress_rules
-  # ingress_cidr_blocks      = var.sg_rds_ingress_cidr_blocks
-  # ingress_rules            = var.ingress_rules
-  # ingress_with_cidr_blocks = var.sg_rds_ingress_with_cidr_blocks
-  # egress_with_cidr_blocks  = var.egress_with_cidr_blocks
-  # egress_cidr_blocks       = var.sg_rds_egress_cidr_blocks
-  # egress_rules             = var.egress_rules
 }

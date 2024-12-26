@@ -26,5 +26,14 @@ locals {
       type                     = "ingress"
       source_security_group_id = module.sg-rds.security_group_id
     }
+
+    ingress_istio = {
+      description              = "Allow EKS worker nodes to connect to RDS"
+      protocol                 = "TCP"
+      from_port                = 3306
+      to_port                  = 3306
+      type                     = "ingress"
+      source_security_group_id = module.sg-istio.security_group_id
+    }
   }
 }
