@@ -254,3 +254,43 @@ variable "sg_istio_egress_rules" {
   type    = any
   default = []
 }
+
+# ###############
+# IAM Admin & Developer variables
+# ###############
+
+variable "admin_usernames" {
+  description = "List of admin usernames"
+  type        = list(string)
+}
+
+variable "developer_usernames" {
+  description = "List of developer usernames"
+  type        = list(string)
+}
+
+variable "force_destroy" {
+  type = bool
+  default = true
+}
+
+variable "create_user" {
+  type = bool
+  default = true  
+}
+
+variable "password_length" {
+  type = number
+  default = 30
+}
+
+variable "password_reset_required" {
+  type = bool
+  default = true
+}
+
+
+
+# ###############
+# IAM Developer variables
+# ###############

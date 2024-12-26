@@ -177,12 +177,32 @@ module "sg-rds" {
   egress_rules             = var.egress_rules
 }
 
-module "sg-istio" {
-  source                   = "./modules/sg-istio"
+module "sg-istio-gateway-lb" {
+  source                   = "./modules/sg-istio-gateway-lb"
   description              = var.sg-istio-description
   name                     = var.sg-istio-name
   vpc_id                   = module.vpc.vpc_id
   create                   = var.create
   ingress_with_cidr_blocks = var.sg_istio_ingress_with_cidr_blocks
   egress_rules             = var.sg_istio_egress_rules
+}
+
+module "admin_iam_users" {
+  source  = "./modules/iam/user"
+  for_each                     = toset(var.admin_usernames)
+  name                         = each.key
+  force_destroy                = var.force_destroy
+  create_user                  = var.create_user
+  password_length              = var.password_length
+  password_reset_required      = var.password_reset_required
+}
+
+module "developer_iam_users" {
+  source  = "./modules/iam/user"
+  for_each                     = toset(var.developer_usernames)
+  name                         = each.key
+  force_destroy                = var.force_destroy
+  create_user                  = var.create_user
+  password_length              = var.password_length
+  password_reset_required      = var.password_reset_required
 }

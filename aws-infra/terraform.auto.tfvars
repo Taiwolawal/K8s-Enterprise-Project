@@ -95,35 +95,12 @@ sg_rds_egress_with_cidr_blocks = [
     cidr_blocks = "0.0.0.0/0"
   }
 ]
-# ingress_cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
-# egress_cidr_blocks  = ["10.0.0.0/16"]
-# ingress_with_cidr_blocks = [
-#   {
-#     from_port   = 3306
-#     to_port     = 3306
-#     protocol    = "tcp"
-#     description = "open port range 3306/tcp ingress rule"
-#     cidr_blocks = "10.0.0.0/16"
-#   }
-# ]
-
-# egress_with_cidr_blocks = [
-#   {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "tcp"
-#     description = "open port"
-#     cidr_blocks = "0.0.0.0/0"
-#   }
-# ]
-
-
 
 # ###############
-# Security-Group Istio variables
+# Security-Group Istio-Gateway-LB variables
 # ###############
 sg-istio-description = "Security Group for Istio"
-sg-istio-name        = "istio-sg"
+sg-istio-name        = "istio-gateway-lb-sg"
 sg_istio_ingress_with_cidr_blocks = [
   {
     from_port   = "80"
@@ -139,15 +116,23 @@ sg_istio_ingress_with_cidr_blocks = [
   }
 ]
 
-sg_istio_egress_rules       = [
-    {
-      description = "Allow all IPv4 traffic"
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-    {
-      description = "Allow all IPv6 traffic"
-      protocol    = "-1"
-      ipv6_cidr_blocks = ["::/0"]
-    }
-  ]
+sg_istio_egress_rules = [
+  {
+    description = "Allow all IPv4 traffic"
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  },
+  {
+    description      = "Allow all IPv6 traffic"
+    protocol         = "-1"
+    ipv6_cidr_blocks = ["::/0"]
+  }
+]
+
+# ###############
+# IAM Admin & Developer variables
+# ###############
+admin_usernames     = ["taiwo", "ukeme", "akuracy", "nonso"]
+developer_usernames = ["geetee", "drintech", "lateef", "kola"]
+
+

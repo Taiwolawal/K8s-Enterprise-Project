@@ -28,10 +28,10 @@ locals {
     }
 
     ingress_istio = {
-      description              = "Allow EKS worker nodes to connect to RDS"
+      description              = "LB port forward to nodes"
       protocol                 = "TCP"
-      from_port                = 3306
-      to_port                  = 3306
+      from_port                = 30000
+      to_port                  = 32767
       type                     = "ingress"
       source_security_group_id = module.sg-istio.security_group_id
     }
