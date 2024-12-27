@@ -43,6 +43,10 @@ variable "node_security_group_additional_rules" {
   type = map(any)
 }
 
+variable "access_entries" {
+  type = map(any)
+}
+
 
 variable "tags" {
   type    = map(any)

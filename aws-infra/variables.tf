@@ -270,22 +270,22 @@ variable "developer_usernames" {
 }
 
 variable "force_destroy" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "create_user" {
-  type = bool
-  default = true  
+  type    = bool
+  default = true
 }
 
 variable "password_length" {
-  type = number
+  type    = number
   default = 30
 }
 
 variable "password_reset_required" {
-  type = bool
+  type    = bool
   default = true
 }
 
@@ -313,9 +313,9 @@ variable "create_group" {
   type = bool
 }
 
-variable "attach_iam_self_management_policy" {
-  type = bool
-}
+# variable "attach_iam_self_management_policy" {
+#   type = bool
+# }
 
 variable "group_users" {
   type = list(string)
@@ -323,6 +323,10 @@ variable "group_users" {
 
 variable "custom_group_policy_arns" {
   type = list(string)
+}
+
+variable "custom_group_policies" {
+  type = string
 }
 
 # ###############
@@ -357,16 +361,16 @@ variable "developer_role_name" {
 }
 
 variable "create_assume_role" {
-  type = bool  
+  type = bool
 }
 
 variable "role_requires_mfa" {
   type = bool
 }
 
-variable "custom_role_policy_arns" {
-  type = list(string)
-}
+# variable "custom_role_policy_arns" {
+#   type = list(string)
+# }
 
 variable "trusted_role_arns" {
   type = list(string)

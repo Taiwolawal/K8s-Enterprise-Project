@@ -1,4 +1,5 @@
 data "aws_availability_zones" "azs" {}
+data "aws_caller_identity" "current" {}
 
 module "vpc" {
   source                       = "./modules/vpc"
@@ -31,21 +32,22 @@ module "eks" {
   eks_managed_node_groups                  = var.eks_managed_node_groups
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
+  access_entries = local.access_entries
   node_security_group_additional_rules     = local.node_security_group_rules
   tags                                     = var.tags
 }
 
-resource "aws_eks_access_entry" "admin-user" {
-  cluster_name      = module.eks.cluster_name
-  principal_arn     = module.admin_ia
-  kubernetes_groups = ["admin"]
-}
+# resource "aws_eks_access_entry" "admin-user" {
+#   cluster_name      = module.eks.cluster_name
+#   principal_arn     = module.admin_ia
+#   kubernetes_groups = ["admin"]
+# }
 
-resource "aws_eks_access_entry" "developer-user" {
-  cluster_name      = module.eks.cluster_name
-  principal_arn     = aws_iam_user.developer.arn
-  kubernetes_groups = ["developer"]
-}
+# resource "aws_eks_access_entry" "developer-user" {
+#   cluster_name      = module.eks.cluster_name
+#   principal_arn     = aws_iam_user.developer.arn
+#   kubernetes_groups = ["developer"]
+# }
 
 resource "kubernetes_namespace" "developer" {
   metadata {
@@ -187,79 +189,86 @@ module "sg-istio-gateway-lb" {
   egress_rules             = var.sg_istio_egress_rules
 }
 
+# Admin User To Access Cluster
 module "admin_iam_users" {
-  source  = "./modules/iam/user"
-  for_each                     = toset(var.admin_usernames)
-  name                         = each.key
-  force_destroy                = var.force_destroy
-  create_user                  = var.create_user
-  password_length              = var.password_length
-  password_reset_required      = var.password_reset_required
+  source                  = "./modules/iam/user"
+  for_each                = toset(var.admin_usernames)
+  name                    = each.key
+  force_destroy           = var.force_destroy
+  create_user             = var.create_user
+  password_length         = var.password_length
+  password_reset_required = var.password_reset_required
 }
 
 module "developer_iam_users" {
-  source  = "./modules/iam/user"
-  for_each                     = toset(var.developer_usernames)
-  name                         = each.key
-  force_destroy                = var.force_destroy
-  create_user                  = var.create_user
-  password_length              = var.password_length
-  password_reset_required      = var.password_reset_required
+  source                  = "./modules/iam/user"
+  for_each                = toset(var.developer_usernames)
+  name                    = each.key
+  force_destroy           = var.force_destroy
+  create_user             = var.create_user
+  password_length         = var.password_length
+  password_reset_required = var.password_reset_required
 }
 
+# Create Group To Admin Users & Attach IAM Policy Assuming EKS
 module "admin_iam_group" {
-  source = "./modules/iam/group"
-  name                            = var.admin_iam_group_name
-  attach_iam_self_management_policy = var.attach_iam_self_management_policy
-  create_group                      = var.create_group
-  group_users                       = [module.admin_iam_users.iam_user_name]
-  custom_group_policy_arns          = var.custom_group_policy_arns
+  source                            = "./modules/iam/group"
+  name                              = var.admin_iam_group_name
+  create_group = var.create_group
+  custom_group_policy_arns = [module.admin_iam_policy.arn]
+  # group_users                       = [module.admin_iam_users.iam_user_name]
+  group_users                       = [for user in module.admin_iam_users : user.iam_user_name]
 }
 
 module "developer_iam_group" {
-  source = "./modules/iam/group"
+  source                            = "./modules/iam/group"
   name                              = var.developer_iam_group_name
-  attach_iam_self_management_policy = var.attach_iam_self_management_policy
   create_group                      = var.create_group
-  group_users                       = [module.developer_iam_users.iam_user_name]
-  custom_group_policy_arns          = var.custom_group_policy_arns
+  group_users                       = [for user in module.developer_iam_users : user.iam_user_name]
+  custom_group_policy_arns          = [module.developer_iam_policy.arn]
 }
 
+# IAM Policy With Admin Access Inside AWS Account
 module "admin_iam_policy" {
-  source = "./modules/iam/policy"
-  name = var.admin_iam_policy_name
+  source        = "./modules/iam/policy"
+  name          = var.admin_iam_policy_name
   create_policy = var.create_policy
-  policy = file("policies/eks-admin-access.json")
+  policy        = file("policies/eks-assume-admin-policy.json")
 }
 
+# 
 module "developer_iam_policy" {
-  source = "./modules/iam/policy"
-  name = var.developer_iam_policy_name
+  source        = "./modules/iam/policy"
+  name          = var.developer_iam_policy_name
   create_policy = var.create_policy
-  policy = file("policies/eks-developer-access.json")
+  policy        = file("policies/eks-developer-access.json")
 }
 
+# IAM Role Granting Admin Privileges inside K8s & Share With Users
 module "admin_iam_role" {
-  source = "./modules/iam/role"
-  role_name = var.admin_role_name
-  create_role = var.create_assume_role
-  role_requires_mfa = var.role_requires_mfa
-  custom_role_policy_arns = [module.admin_iam_policy.arn]
-  trusted_role_arns =  ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"] 
+  source                  = "./modules/iam/role"
+  role_name               = var.admin_role_name
+  create_role             = var.create_assume_role
+  role_requires_mfa       = var.role_requires_mfa
+  inline_policy_statements = file("policies/eks-admin-access.json")
+  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
 }
 
 module "developer_iam_role" {
-  source = "./modules/iam/role"
-  role_name = var.developer_role_name
-  create_role = var.create_assume_role
-  role_requires_mfa = var.role_requires_mfa
-  custom_role_policy_arns = [ module.developer_iam_policy.arn ]
-  trusted_role_arns =  ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"] 
+  source                  = "./modules/iam/role"
+  role_name               = var.developer_role_name
+  create_role             = var.create_assume_role
+  role_requires_mfa       = var.role_requires_mfa
+  inline_policy_statements = file("policies/eks-developer-access.json")
+  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
 }
 
+#  custom_role_policy_arns = [module.developer_iam_policy.arn]
+
+# IAM Policy Assuming EKS IAM Admin Role
 module "iam_policy_assume_iam_role_admin" {
-  source = "./modules/iam/assume-role"
-  name = var.admin_assume_iam_policy
+  source        = "./modules/iam/assume-role"
+  name          = var.admin_assume_iam_policy
   create_policy = var.create_iam_assume_policy
   policy = jsonencode({
     Version = "2012-10-17"
@@ -269,15 +278,15 @@ module "iam_policy_assume_iam_role_admin" {
           "sts:AssumeRole",
         ]
         Effect   = "Allow"
-        Resource = module.admin_iam_role.arn
+        Resource = "${module.admin_iam_role.iam_role_arn}"
       },
     ]
   })
 }
 
 module "iam_policy_assume_iam_role_developer" {
-  source = "./modules/iam/assume-role"
-  name = var.developer_assume_iam_policy
+  source        = "./modules/iam/assume-role"
+  name          = var.developer_assume_iam_policy
   create_policy = var.create_iam_assume_policy
   policy = jsonencode({
     Version = "2012-10-17"
@@ -287,8 +296,12 @@ module "iam_policy_assume_iam_role_developer" {
           "sts:AssumeRole",
         ]
         Effect   = "Allow"
-        Resource = module.developer_iam_role.arn
+        Resource = "${module.developer_iam_role.iam_role_arn}"
       },
     ]
   })
 }
+
+# ${module.admin_iam_role.iam_role_arn}
+
+# module.developer_iam_role.iam_role_arn

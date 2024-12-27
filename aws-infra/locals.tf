@@ -33,7 +33,19 @@ locals {
       from_port                = 30000
       to_port                  = 32767
       type                     = "ingress"
-      source_security_group_id = module.sg-istio.security_group_id
+      source_security_group_id = module.sg-istio-gateway-lb.security_group_id
+    }
+  }
+
+  access_entries = {
+    admin = {
+      kubernetes_groups = [admin]
+      principal_arn     = module.admin_iam_role.iam_role_arn
+    }
+
+    developer = {
+      kubernetes_groups = [developer]
+      principal_arn     = module.developer_iam_role.iam_role_arn
     }
   }
 }

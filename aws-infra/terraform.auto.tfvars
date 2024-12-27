@@ -138,29 +138,29 @@ developer_usernames = ["geetee", "drintech", "lateef", "kola"]
 # ###############
 # IAM Group variables
 # ###############
-admin_iam_group_name = "admin"
-developer_iam_group_name = "developer"
-attach_iam_self_management_policy = false
+admin_iam_group_name              = "admin"
+developer_iam_group_name          = "developer"
+# attach_iam_self_management_policy = false
 create_group                      = true
 
 # ###############
 # IAM Policy variables
 # ###############
-admin_iam_policy_name = "allow_eks_access_admin_policy"
+admin_iam_policy_name     = "allow_eks_access_admin_policy"
 developer_iam_policy_name = "allow_eks_access_developer_policy"
-create_policy = true
+create_policy             = true
 
 # ###############
 # Role variables
 # ###############
-admin_role_name = "admin_role"
+admin_role_name     = "admin_role"
 developer_role_name = "developer_role"
-create_assume_role = true
-role_requires_mfa = false
+create_assume_role  = true
+role_requires_mfa   = false
 
 # ###############
 # IAM Policy Assume variables
 # ###############
-admin_assume_iam_policy = "allow-assume-eks-admin-iam-role"
+admin_assume_iam_policy     = "allow-assume-eks-admin-iam-role"
 developer_assume_iam_policy = "allow-assume-eks-developer-iam-role"
-create_iam_assume_policy = true
+create_iam_assume_policy    = true

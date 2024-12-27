@@ -4,6 +4,6 @@ module "iam_role" {
   role_name         = var.role_name
   create_role       = var.create_role
   role_requires_mfa = var.role_requires_mfa
-  custom_role_policy_arns = var.custom_role_policy_arns
+  inline_policy_statements = var.inline_policy_statements
   trusted_role_arns = var.trusted_role_arns
 }
