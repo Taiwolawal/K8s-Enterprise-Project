@@ -294,3 +294,96 @@ variable "password_reset_required" {
 # ###############
 # IAM Developer variables
 # ###############
+
+
+
+
+# ###############
+# IAM Group variables
+# ###############
+variable "admin_iam_group_name" {
+  type = string
+}
+
+variable "developer_iam_group_name" {
+  type = string
+}
+
+variable "create_group" {
+  type = bool
+}
+
+variable "attach_iam_self_management_policy" {
+  type = bool
+}
+
+variable "group_users" {
+  type = list(string)
+}
+
+variable "custom_group_policy_arns" {
+  type = list(string)
+}
+
+# ###############
+# IAM Policy variables
+# ###############
+
+variable "admin_iam_policy_name" {
+  type = string
+}
+
+variable "developer_iam_policy_name" {
+  type = string
+}
+
+variable "create_policy" {
+  type = bool
+}
+
+variable "iam_policy" {
+  type = string
+}
+
+# ###############
+# Role variables
+# ###############
+variable "admin_role_name" {
+  type = string
+}
+
+variable "developer_role_name" {
+  type = string
+}
+
+variable "create_assume_role" {
+  type = bool  
+}
+
+variable "role_requires_mfa" {
+  type = bool
+}
+
+variable "custom_role_policy_arns" {
+  type = list(string)
+}
+
+variable "trusted_role_arns" {
+  type = list(string)
+}
+
+# ###############
+# IAM Policy Assume variables
+# ###############
+
+variable "admin_assume_iam_policy" {
+  type = string
+}
+
+variable "developer_assume_iam_policy" {
+  type = string
+}
+
+variable "create_iam_assume_policy" {
+  type = bool
+}

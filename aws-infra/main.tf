@@ -37,7 +37,7 @@ module "eks" {
 
 resource "aws_eks_access_entry" "admin-user" {
   cluster_name      = module.eks.cluster_name
-  principal_arn     = aws_iam_role.eks_admin.arn
+  principal_arn     = module.admin_ia
   kubernetes_groups = ["admin"]
 }
 
@@ -205,4 +205,90 @@ module "developer_iam_users" {
   create_user                  = var.create_user
   password_length              = var.password_length
   password_reset_required      = var.password_reset_required
+}
+
+module "admin_iam_group" {
+  source = "./modules/iam/group"
+  name                            = var.admin_iam_group_name
+  attach_iam_self_management_policy = var.attach_iam_self_management_policy
+  create_group                      = var.create_group
+  group_users                       = [module.admin_iam_users.iam_user_name]
+  custom_group_policy_arns          = var.custom_group_policy_arns
+}
+
+module "developer_iam_group" {
+  source = "./modules/iam/group"
+  name                              = var.developer_iam_group_name
+  attach_iam_self_management_policy = var.attach_iam_self_management_policy
+  create_group                      = var.create_group
+  group_users                       = [module.developer_iam_users.iam_user_name]
+  custom_group_policy_arns          = var.custom_group_policy_arns
+}
+
+module "admin_iam_policy" {
+  source = "./modules/iam/policy"
+  name = var.admin_iam_policy_name
+  create_policy = var.create_policy
+  policy = file("policies/eks-admin-access.json")
+}
+
+module "developer_iam_policy" {
+  source = "./modules/iam/policy"
+  name = var.developer_iam_policy_name
+  create_policy = var.create_policy
+  policy = file("policies/eks-developer-access.json")
+}
+
+module "admin_iam_role" {
+  source = "./modules/iam/role"
+  role_name = var.admin_role_name
+  create_role = var.create_assume_role
+  role_requires_mfa = var.role_requires_mfa
+  custom_role_policy_arns = [module.admin_iam_policy.arn]
+  trusted_role_arns =  ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"] 
+}
+
+module "developer_iam_role" {
+  source = "./modules/iam/role"
+  role_name = var.developer_role_name
+  create_role = var.create_assume_role
+  role_requires_mfa = var.role_requires_mfa
+  custom_role_policy_arns = [ module.developer_iam_policy.arn ]
+  trusted_role_arns =  ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"] 
+}
+
+module "iam_policy_assume_iam_role_admin" {
+  source = "./modules/iam/assume-role"
+  name = var.admin_assume_iam_policy
+  create_policy = var.create_iam_assume_policy
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sts:AssumeRole",
+        ]
+        Effect   = "Allow"
+        Resource = module.admin_iam_role.arn
+      },
+    ]
+  })
+}
+
+module "iam_policy_assume_iam_role_developer" {
+  source = "./modules/iam/assume-role"
+  name = var.developer_assume_iam_policy
+  create_policy = var.create_iam_assume_policy
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sts:AssumeRole",
+        ]
+        Effect   = "Allow"
+        Resource = module.developer_iam_role.arn
+      },
+    ]
+  })
 }
