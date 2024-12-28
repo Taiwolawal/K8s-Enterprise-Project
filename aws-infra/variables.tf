@@ -288,13 +288,6 @@ variable "password_reset_required" {
 
 
 # ###############
-# IAM Developer variables
-# ###############
-
-
-
-
-# ###############
 # IAM Group variables
 # ###############
 variable "admin_iam_group_name" {
@@ -308,10 +301,6 @@ variable "developer_iam_group_name" {
 variable "create_group" {
   type = bool
 }
-
-# variable "attach_iam_self_management_policy" {
-#   type = bool
-# }
 
 # variable "group_users" {
 #   type = list(string)
@@ -354,10 +343,6 @@ variable "create_assume_role" {
 variable "role_requires_mfa" {
   type = bool
 }
-
-# variable "custom_role_policy_arns" {
-#   type = list(string)
-# }
 
 
 # ###############
