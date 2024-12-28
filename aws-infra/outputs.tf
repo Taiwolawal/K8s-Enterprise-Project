@@ -35,22 +35,12 @@ output "developer_iam_user_name" {
 
 output "admin_iam_role_arn" {
   description = "Admin Role ARN"
-  value = module.admin_iam_role.iam_role_arn
+  value       = module.admin_iam_role.iam_role_arn
 }
 
 output "develop_iam_role_arn" {
   description = "Admin Role ARN"
-  value = module.developer_iam_role.iam_role_arn
+  value       = module.developer_iam_role.iam_role_arn
 }
 
 
-
-# output "admin_policy_arn" {
-#   description = "The ARN assigned by AWS to this policy"
-#   value       = module.admin_iam_policy.arn
-# }
-
-# # output "developer_policy_arn" {
-# #   description = "The ARN assigned by AWS to this policy"
-# #   value       = module.developer_iam_policy.arn
-# # }

@@ -44,11 +44,6 @@ variable "node_security_group_additional_rules" {
 }
 
 variable "access_entries" {
-  type = map(any)
-}
-
-
-variable "tags" {
   type    = map(any)
   default = {}
 }

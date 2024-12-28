@@ -17,5 +17,4 @@ module "rds" {
   family               = var.family
   major_engine_version = var.major_engine_version
   deletion_protection  = var.deletion_protection
-  tags                 = var.tags
 }

@@ -15,5 +15,4 @@ module "vpc" {
   database_subnet_group_name   = var.database_subnet_group_name
   public_subnet_tags = var.public_subnet_tags
   private_subnet_tags = var.private_subnet_tags
-  tags = var.tags
 }

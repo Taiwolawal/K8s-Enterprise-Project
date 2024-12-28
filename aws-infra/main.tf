@@ -17,7 +17,6 @@ module "vpc" {
   database_subnet_group_name   = var.database_subnet_group_name
   public_subnet_tags           = var.public_subnet_tags
   private_subnet_tags          = var.private_subnet_tags
-  tags                         = var.tags
 }
 
 module "eks" {
@@ -32,22 +31,15 @@ module "eks" {
   eks_managed_node_groups                  = var.eks_managed_node_groups
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
-  access_entries = local.access_entries
+  access_entries                           = local.access_entries
   node_security_group_additional_rules     = local.node_security_group_rules
-  tags                                     = var.tags
+  depends_on = [
+    aws_iam_role_policy_attachment.eks,
+    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
+    aws_iam_role_policy_attachment.amazon_eks_cni_policy,
+  ]
 }
 
-# resource "aws_eks_access_entry" "admin-user" {
-#   cluster_name      = module.eks.cluster_name
-#   principal_arn     = module.admin_ia
-#   kubernetes_groups = ["admin"]
-# }
-
-# resource "aws_eks_access_entry" "developer-user" {
-#   cluster_name      = module.eks.cluster_name
-#   principal_arn     = aws_iam_user.developer.arn
-#   kubernetes_groups = ["developer"]
-# }
 
 resource "kubernetes_namespace" "developer" {
   metadata {
@@ -67,8 +59,8 @@ resource "kubernetes_role" "developer" {
 
   rule {
     api_groups = ["*"]
-    resources  = ["pods", "services", "delpoyment"]
-    verbs      = ["get", "list", "describe"]
+    resources  = ["pods", "services", "deployment", "configmap", "secret"]
+    verbs      = ["get", "list", "describe", "watch"]
   }
 
 }
@@ -162,7 +154,6 @@ module "rds" {
   family                      = var.family
   major_engine_version        = var.major_engine_version
   deletion_protection         = var.deletion_protection
-  tags                        = var.tags
 }
 
 module "sg-rds" {
@@ -212,20 +203,20 @@ module "developer_iam_users" {
 
 # Create Group To Admin Users & Attach IAM Policy Assuming EKS
 module "admin_iam_group" {
-  source                            = "./modules/iam/group"
-  name                              = var.admin_iam_group_name
-  create_group = var.create_group
+  source                   = "./modules/iam/group"
+  name                     = var.admin_iam_group_name
+  create_group             = var.create_group
   custom_group_policy_arns = [module.admin_iam_policy.arn]
   # group_users                       = [module.admin_iam_users.iam_user_name]
-  group_users                       = [for user in module.admin_iam_users : user.iam_user_name]
+  group_users = [for user in module.admin_iam_users : user.iam_user_name]
 }
 
 module "developer_iam_group" {
-  source                            = "./modules/iam/group"
-  name                              = var.developer_iam_group_name
-  create_group                      = var.create_group
-  group_users                       = [for user in module.developer_iam_users : user.iam_user_name]
-  custom_group_policy_arns          = [module.developer_iam_policy.arn]
+  source                   = "./modules/iam/group"
+  name                     = var.developer_iam_group_name
+  create_group             = var.create_group
+  group_users              = [for user in module.developer_iam_users : user.iam_user_name]
+  custom_group_policy_arns = [module.developer_iam_policy.arn]
 }
 
 # IAM Policy With Admin Access Inside AWS Account
@@ -246,62 +237,20 @@ module "developer_iam_policy" {
 
 # IAM Role Granting Admin Privileges inside K8s & Share With Users
 module "admin_iam_role" {
-  source                  = "./modules/iam/role"
-  role_name               = var.admin_role_name
-  create_role             = var.create_assume_role
-  role_requires_mfa       = var.role_requires_mfa
+  source                   = "./modules/iam/role"
+  role_name                = var.admin_role_name
+  create_role              = var.create_assume_role
+  role_requires_mfa        = var.role_requires_mfa
   inline_policy_statements = file("policies/eks-admin-access.json")
-  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+  trusted_role_arns        = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
 }
 
 module "developer_iam_role" {
-  source                  = "./modules/iam/role"
-  role_name               = var.developer_role_name
-  create_role             = var.create_assume_role
-  role_requires_mfa       = var.role_requires_mfa
+  source                   = "./modules/iam/role"
+  role_name                = var.developer_role_name
+  create_role              = var.create_assume_role
+  role_requires_mfa        = var.role_requires_mfa
   inline_policy_statements = file("policies/eks-developer-access.json")
-  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+  trusted_role_arns        = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
 }
 
-#  custom_role_policy_arns = [module.developer_iam_policy.arn]
-
-# IAM Policy Assuming EKS IAM Admin Role
-module "iam_policy_assume_iam_role_admin" {
-  source        = "./modules/iam/assume-role"
-  name          = var.admin_assume_iam_policy
-  create_policy = var.create_iam_assume_policy
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "sts:AssumeRole",
-        ]
-        Effect   = "Allow"
-        Resource = "${module.admin_iam_role.iam_role_arn}"
-      },
-    ]
-  })
-}
-
-module "iam_policy_assume_iam_role_developer" {
-  source        = "./modules/iam/assume-role"
-  name          = var.developer_assume_iam_policy
-  create_policy = var.create_iam_assume_policy
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "sts:AssumeRole",
-        ]
-        Effect   = "Allow"
-        Resource = "${module.developer_iam_role.iam_role_arn}"
-      },
-    ]
-  })
-}
-
-# ${module.admin_iam_role.iam_role_arn}
-
-# module.developer_iam_role.iam_role_arn

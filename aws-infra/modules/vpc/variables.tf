@@ -68,8 +68,3 @@ variable "private_subnet_tags" {
   default = {}
 }
 
-variable "tags" {
-  type    = map(any)
-  default = {}
-}
-

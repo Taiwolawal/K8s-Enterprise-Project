@@ -70,10 +70,6 @@ variable "private_subnet_tags" {
   default = {}
 }
 
-variable "tags" {
-  type    = map(any)
-  default = {}
-}
 
 ################
 # EKS variables
@@ -317,17 +313,11 @@ variable "create_group" {
 #   type = bool
 # }
 
-variable "group_users" {
-  type = list(string)
-}
+# variable "group_users" {
+#   type = list(string)
+# }
 
-variable "custom_group_policy_arns" {
-  type = list(string)
-}
 
-variable "custom_group_policies" {
-  type = string
-}
 
 # ###############
 # IAM Policy variables
@@ -345,9 +335,6 @@ variable "create_policy" {
   type = bool
 }
 
-variable "iam_policy" {
-  type = string
-}
 
 # ###############
 # Role variables
@@ -372,9 +359,6 @@ variable "role_requires_mfa" {
 #   type = list(string)
 # }
 
-variable "trusted_role_arns" {
-  type = list(string)
-}
 
 # ###############
 # IAM Policy Assume variables

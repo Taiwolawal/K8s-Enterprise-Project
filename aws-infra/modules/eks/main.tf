@@ -13,5 +13,4 @@ module "eks" {
   authentication_mode = var.authentication_mode
   access_entries = var.access_entries
   node_security_group_additional_rules = var.node_security_group_additional_rules
-  tags = var.tags
 }

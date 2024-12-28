@@ -22,6 +22,18 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+
+# Ensures all resource are tagged 
+  default_tags {
+    tags = {
+      Terraform   = "true"
+      Environment = "dev"
+    }
+  }
+}
+
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)

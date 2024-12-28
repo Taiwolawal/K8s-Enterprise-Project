@@ -19,10 +19,7 @@ public_subnet_tags = {
 private_subnet_tags = {
   "kubernetes.io/role/internal-elb" = 1
 }
-tags = {
-  Terraform   = "true"
-  Environment = "dev"
-}
+
 
 ################
 # EKS variables
@@ -138,10 +135,10 @@ developer_usernames = ["geetee", "drintech", "lateef", "kola"]
 # ###############
 # IAM Group variables
 # ###############
-admin_iam_group_name              = "admin"
-developer_iam_group_name          = "developer"
+admin_iam_group_name     = "admin"
+developer_iam_group_name = "developer"
 # attach_iam_self_management_policy = false
-create_group                      = true
+create_group = true
 
 # ###############
 # IAM Policy variables
