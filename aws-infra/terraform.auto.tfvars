@@ -113,19 +113,6 @@ sg_istio_ingress_with_cidr_blocks = [
   }
 ]
 
-# sg_istio_egress_with_cidr_blocks = [
-#   {
-#     description = "Allow all IPv4 traffic"
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   },
-#   {
-#     description      = "Allow all IPv6 traffic"
-#     protocol         = "-1"
-#     ipv6_cidr_blocks = ["::/0"]
-#   }
-# ]
-
 sg_istio_egress_with_cidr_blocks = [
   {
     description = "Allow all IPv4 traffic"
@@ -133,17 +120,15 @@ sg_istio_egress_with_cidr_blocks = [
     cidr_blocks = "0.0.0.0/0"
     from_port   = 0
     to_port     = 0
-  },
-  {
-    description      = "Allow all IPv6 traffic"
-    protocol         = "-1"
-    ipv6_cidr_blocks = "::/0"
-    from_port        = 0
-    to_port          = 0
   }
+  # {
+  #   description      = "Allow all IPv6 traffic"
+  #   protocol         = "-1"
+  #   ipv6_cidr_blocks = "::/0"
+  #   from_port        = 0
+  #   to_port          = 0
+  # }
 ]
-
-
 
 # ###############
 # IAM Admin & Developer variables
