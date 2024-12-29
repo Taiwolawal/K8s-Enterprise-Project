@@ -145,7 +145,7 @@ module "rds" {
   instance_class              = var.instance_class
   db_subnet_group_name        = module.vpc.database_subnet_group_name
   allocated_storage           = var.allocated_storage
-  vpc_security_group_ids      = [module.sg-rds.security_group_id]
+  vpc_security_group_ids      = [module.sg-rds.security_group_id[0]]
   db_name                     = var.db_name
   username                    = var.username
   manage_master_user_password = var.manage_master_user_password
@@ -177,7 +177,7 @@ module "sg-istio-gateway-lb" {
   vpc_id                   = module.vpc.vpc_id
   create                   = var.create
   ingress_with_cidr_blocks = var.sg_istio_ingress_with_cidr_blocks
-  egress_rules             = var.sg_istio_egress_rules
+  egress_with_cidr_blocks  = var.sg_istio_egress_with_cidr_blocks
 }
 
 # Admin User To Access Cluster
@@ -224,7 +224,7 @@ module "admin_iam_policy" {
   source        = "./modules/iam/policy"
   name          = var.admin_iam_policy_name
   create_policy = var.create_policy
-  policy        = file("policies/eks-assume-admin-policy.json")
+  policy        = file("policies/eks-admin-access.json")
 }
 
 # 
@@ -237,20 +237,60 @@ module "developer_iam_policy" {
 
 # IAM Role Granting Admin Privileges inside K8s & Share With Users
 module "admin_iam_role" {
-  source                   = "./modules/iam/role"
-  role_name                = var.admin_role_name
-  create_role              = var.create_assume_role
-  role_requires_mfa        = var.role_requires_mfa
-  inline_policy_statements = file("policies/eks-admin-access.json")
-  trusted_role_arns        = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+  source                  = "./modules/iam/role"
+  role_name               = var.admin_role_name
+  create_role             = var.create_assume_role
+  role_requires_mfa       = var.role_requires_mfa
+  custom_role_policy_arns = [module.admin_iam_policy.arn]
+  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
 }
 
 module "developer_iam_role" {
-  source                   = "./modules/iam/role"
-  role_name                = var.developer_role_name
-  create_role              = var.create_assume_role
-  role_requires_mfa        = var.role_requires_mfa
-  inline_policy_statements = file("policies/eks-developer-access.json")
-  trusted_role_arns        = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+  source                  = "./modules/iam/role"
+  role_name               = var.developer_role_name
+  create_role             = var.create_assume_role
+  role_requires_mfa       = var.role_requires_mfa
+  custom_role_policy_arns = [module.developer_iam_policy.arn]
+  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
 }
+
+module "allow_assume_eks_admins_iam_policy" {
+  source        = "./modules/iam/policy"
+  name          = var.assume_eks_admin_iam_role
+  create_policy = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sts:AssumeRole",
+        ]
+        Effect   = "Allow"
+        Resource = module.admin_iam_role.iam_role_arn
+      },
+    ]
+  })
+}
+
+module "allow_assume_eks_developer_iam_policy" {
+  source        = "./modules/iam/policy"
+  name          = var.assume_eks_developer_iam_role
+  create_policy = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sts:AssumeRole",
+        ]
+        Effect   = "Allow"
+        Resource = module.developer_iam_role.iam_role_arn
+      },
+    ]
+  })
+}
+
+
 

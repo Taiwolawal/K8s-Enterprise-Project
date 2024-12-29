@@ -22,7 +22,7 @@ variable "ingress_with_cidr_blocks" {
   default = []
 }
 
-variable "egress_rules" {
+variable "egress_with_cidr_blocks" {
   type    = any
   default = []
 }

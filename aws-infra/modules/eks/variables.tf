@@ -26,11 +26,6 @@ variable "subnet_ids" {
   type = list(string)
 }
 
-variable "authentication_mode" {
-  type = string
-}
-
-
 variable "eks_managed_node_groups" {
   type = map(any)
 }
@@ -39,11 +34,18 @@ variable "enable_cluster_creator_admin_permissions" {
   type = bool
 }
 
-variable "node_security_group_additional_rules" {
-  type = map(any)
+variable "authentication_mode" {
+  type = string
 }
+
 
 variable "access_entries" {
   type    = map(any)
   default = {}
 }
+
+variable "node_security_group_additional_rules" {
+  type = map(any)
+}
+
+

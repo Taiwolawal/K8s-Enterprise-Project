@@ -113,18 +113,37 @@ sg_istio_ingress_with_cidr_blocks = [
   }
 ]
 
-sg_istio_egress_rules = [
+# sg_istio_egress_with_cidr_blocks = [
+#   {
+#     description = "Allow all IPv4 traffic"
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   },
+#   {
+#     description      = "Allow all IPv6 traffic"
+#     protocol         = "-1"
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
+# ]
+
+sg_istio_egress_with_cidr_blocks = [
   {
     description = "Allow all IPv4 traffic"
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = "0.0.0.0/0"
+    from_port   = 0
+    to_port     = 0
   },
   {
     description      = "Allow all IPv6 traffic"
     protocol         = "-1"
-    ipv6_cidr_blocks = ["::/0"]
+    ipv6_cidr_blocks = "::/0"
+    from_port        = 0
+    to_port          = 0
   }
 ]
+
+
 
 # ###############
 # IAM Admin & Developer variables
@@ -137,14 +156,13 @@ developer_usernames = ["geetee", "drintech", "lateef", "kola"]
 # ###############
 admin_iam_group_name     = "admin"
 developer_iam_group_name = "developer"
-# attach_iam_self_management_policy = false
-create_group = true
+create_group             = true
 
 # ###############
 # IAM Policy variables
 # ###############
-admin_iam_policy_name     = "allow_eks_access_admin_policy"
-developer_iam_policy_name = "allow_eks_access_developer_policy"
+admin_iam_policy_name     = "allow-eks-access-admin-policy"
+developer_iam_policy_name = "allow-eks-access-developer-policy"
 create_policy             = true
 
 # ###############
@@ -158,6 +176,6 @@ role_requires_mfa   = false
 # ###############
 # IAM Policy Assume variables
 # ###############
-admin_assume_iam_policy     = "allow-assume-eks-admin-iam-role"
-developer_assume_iam_policy = "allow-assume-eks-developer-iam-role"
-create_iam_assume_policy    = true
+assume_eks_admin_iam_role          = "assume-eks-admin-iam-role"
+assume_eks_developer_iam_role      = "assume-eks-developer-iam-role"
+create_eks_assume_user_role_policy = true

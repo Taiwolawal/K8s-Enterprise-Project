@@ -10,15 +10,13 @@ variable "role_requires_mfa" {
   type = bool
 }
 
-# variable "custom_role_policy_arns" {
-#   type = list(string)
-# }
+variable "custom_role_policy_arns" {
+  type = list(string)
+}
 
 variable "trusted_role_arns" {
   type = list(string)
 }
 
-variable "inline_policy_statements" {
-  type = string
-}
+
 

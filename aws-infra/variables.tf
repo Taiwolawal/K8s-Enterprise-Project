@@ -246,7 +246,7 @@ variable "sg_istio_ingress_with_cidr_blocks" {
   default = []
 }
 
-variable "sg_istio_egress_rules" {
+variable "sg_istio_egress_with_cidr_blocks" {
   type    = any
   default = []
 }
@@ -349,14 +349,14 @@ variable "role_requires_mfa" {
 # IAM Policy Assume variables
 # ###############
 
-variable "admin_assume_iam_policy" {
+variable "assume_eks_admin_iam_role" {
   type = string
 }
 
-variable "developer_assume_iam_policy" {
+variable "assume_eks_developer_iam_role" {
   type = string
 }
 
-variable "create_iam_assume_policy" {
+variable "create_eks_assume_user_role_policy" {
   type = bool
 }
