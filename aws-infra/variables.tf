@@ -299,6 +299,10 @@ variable "developer_iam_policy_name" {
   type = string
 }
 
+variable "alb_iam_policy_name" {
+  type = string
+}
+
 variable "create_policy" {
   type = bool
 }
@@ -345,13 +349,13 @@ variable "create_eks_assume_user_role_policy" {
 # AWS LB IAM Role
 # ###############
 variable "aws_lb_iam_role_name" {
-  type = string 
+  type = string
 }
 
 variable "assume_aws_lb_iam_role" {
-  type = string 
+  type = string
 }
- 
+
 # ###############
 # AWS LB Controller Pod Identity
 # ###############
@@ -359,17 +363,17 @@ variable "aws_lb_controller_pod_identity_name" {
   type = string
 }
 
-variable "attach_aws_lb_controller_policy" {  
-  type = bool   
+variable "attach_aws_lb_controller_policy" {
+  type = bool
 }
 
 variable "association_defaults" {
   type    = map(any)
   default = {}
-  
+
 }
 
-variable "association" {
-  type    = map(any)
-  default = {}
-}
+# variable "association" {
+#   type    = map(any)
+#   default = {}
+# }

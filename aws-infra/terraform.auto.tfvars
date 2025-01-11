@@ -112,6 +112,7 @@ create_group             = true
 # ###############
 admin_iam_policy_name     = "allow-eks-access-admin-policy"
 developer_iam_policy_name = "allow-eks-access-developer-policy"
+alb_iam_policy_name       = "allow-alb-policy"
 create_policy             = true
 
 # ###############
@@ -127,28 +128,23 @@ role_requires_mfa   = false
 # ###############
 assume_eks_admin_iam_role          = "assume-eks-admin-iam-role"
 assume_eks_developer_iam_role      = "assume-eks-developer-iam-role"
-assume_aws_lb_iam_role = "assume-aws-lb-role"
+assume_aws_lb_iam_role             = "assume-aws-lb-role"
 create_eks_assume_user_role_policy = true
 
 # ###############
 # AWS LB IAM Role
 # ###############
-aws_lb_iam_role_name  = "aws-lb-role"
+aws_lb_iam_role_name = "aws-lb-role"
 
 # ###############
 # AWS LB Controller Pod Identity
 # ###############
 
 aws_lb_controller_pod_identity_name = "aws-lb-pod-identity"
-attach_aws_lb_controller_policy = yes
+attach_aws_lb_controller_policy     = true
 association_defaults = {
   namespace       = "kube-system"
   service_account = "aws-load-balancer-controller-sa"
 }
 
-association = {
-  cluster = {
-    cluster_name = module.eks.cluster_name
-  }
-}
 

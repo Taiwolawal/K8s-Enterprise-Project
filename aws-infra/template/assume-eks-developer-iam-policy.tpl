@@ -6,7 +6,7 @@
         "sts:AssumeRole"
       ],
       "Effect": "Allow",
-      "Resource": "${assume_eks_iam_policy}"
+      "Resource": "${assume_eks_developer_iam_policy}"
     }
   ]
 }

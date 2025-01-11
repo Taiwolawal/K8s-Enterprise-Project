@@ -16,7 +16,11 @@ output "database_subnet_group_name" {
 }
 
 
-# EKS OUTPUT   
+# EKS OUTPUT  
+
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
 output "oidc_provider_arn" {
   value       = module.eks.oidc_provider_arn
   description = "EKS oidc_provider_arn"
@@ -41,10 +45,6 @@ output "cluster_id" {
 # Security Group OUTPUT  
 output "rds-security_group_id" {
   value = [module.sg-rds.security_group_id]
-}
-
-output "istio-gateway-lb-security_group_id" {
-  value = [module.sg-istio-gateway-lb.security_group_id]
 }
 
 

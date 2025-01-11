@@ -13,6 +13,12 @@ locals {
 
   }
 
+  association = {
+    cluster = {
+      cluster_name = module.eks.cluster_name
+    }
+  }
+
   access_entries = {
     admin = {
       kubernetes_groups = ["admin"]
@@ -44,4 +50,6 @@ locals {
       }
     }
   }
+
+
 }
