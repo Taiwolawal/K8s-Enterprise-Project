@@ -1,24 +1,5 @@
 locals {
   node_security_group_rules = {
-    ingress_15017 = {
-      description                   = "Cluster API to Istio Webhook namespace.sidecar-injector.istio.io"
-      protocol                      = "TCP"
-      from_port                     = 15017
-      to_port                       = 15017
-      type                          = "ingress"
-      source_cluster_security_group = true
-      source_security_group_id      = ""
-    }
-
-    ingress_15012 = {
-      description                   = "Cluster API to nodes ports/protocols"
-      protocol                      = "TCP"
-      from_port                     = 15012
-      to_port                       = 15012
-      type                          = "ingress"
-      source_cluster_security_group = true
-      source_security_group_id      = ""
-    }
 
     ingress_rds = {
       description                   = "Allow EKS worker nodes to connect to RDS"
@@ -30,15 +11,6 @@ locals {
       source_security_group_id      = module.sg-rds.security_group_id[0]
     }
 
-    ingress_istio = {
-      description                   = "LB port forward to nodes"
-      protocol                      = "TCP"
-      from_port                     = 30000
-      to_port                       = 32767
-      type                          = "ingress"
-      source_cluster_security_group = true
-      source_security_group_id      = module.sg-istio-gateway-lb.security_group_id[0]
-    }
   }
 
   access_entries = {

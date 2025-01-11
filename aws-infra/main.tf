@@ -170,16 +170,6 @@ module "sg-rds" {
   egress_rules             = var.egress_rules
 }
 
-module "sg-istio-gateway-lb" {
-  source                   = "./modules/sg-istio-gateway-lb"
-  description              = var.sg-istio-description
-  name                     = var.sg-istio-name
-  vpc_id                   = module.vpc.vpc_id
-  create                   = var.create
-  ingress_with_cidr_blocks = var.sg_istio_ingress_with_cidr_blocks
-  egress_with_cidr_blocks  = var.sg_istio_egress_with_cidr_blocks
-}
-
 # Admin User To Access Cluster
 module "admin_iam_users" {
   source                  = "./modules/iam/user"
@@ -207,7 +197,6 @@ module "admin_iam_group" {
   name                     = var.admin_iam_group_name
   create_group             = var.create_group
   custom_group_policy_arns = [module.admin_iam_policy.arn]
-  # group_users                       = [module.admin_iam_users.iam_user_name]
   group_users = [for user in module.admin_iam_users : user.iam_user_name]
 }
 
@@ -258,19 +247,22 @@ module "allow_assume_eks_admins_iam_policy" {
   source        = "./modules/iam/policy"
   name          = var.assume_eks_admin_iam_role
   create_policy = true
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "sts:AssumeRole",
-        ]
-        Effect   = "Allow"
-        Resource = module.admin_iam_role.iam_role_arn
-      },
-    ]
+  policy = templatefile("${path.root}/template/eks_admin_policy.tpl", {
+    assume_eks_iam_policy = module.admin_iam_role.iam_role_arn
   })
+
+  # policy = jsonencode({
+  #   Version = "2012-10-17"
+  #   Statement = [
+  #     {
+  #       Action = [
+  #         "sts:AssumeRole",
+  #       ]
+  #       Effect   = "Allow"
+  #       Resource = module.admin_iam_role.iam_role_arn
+  #     },
+  #   ]
+  # })
 }
 
 module "allow_assume_eks_developer_iam_policy" {
@@ -294,3 +286,49 @@ module "allow_assume_eks_developer_iam_policy" {
 
 
 
+# IAM Policy for AWS Load Balancer
+module "aws_lb_iam_policy" {
+  source        = "./modules/iam/policy"
+  name          = var.admin_iam_policy_name
+  create_policy = var.create_policy
+  policy        = file("policies/AWSLoadBalancerController.json")
+}
+
+module "aws_lb_iam_role" {
+  source                  = "./modules/iam/role"
+  role_name               = var.aws_lb_iam_role_name
+  create_role             = var.create_assume_role
+  role_requires_mfa       = var.role_requires_mfa
+  custom_role_policy_arns = [module.aws_lb_iam_policy.arn]
+  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+}
+
+module "allow_assume_aws_lb_iam_policy" {
+  source        = "./modules/iam/policy"
+  name          = var.assume_aws_lb_iam_role
+  create_policy = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+        Principal = {
+          Service = "pods.eks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+module "aws_lb_controller_pod_identity" {
+  source = "./modules/pod-identity"
+  name = var.aws_lb_controller_pod_identity_name
+  attach_aws_lb_controller_policy = var.attach_aws_lb_controller_policy
+  association_defaults = var.association_defaults 
+  association = var.association
+}

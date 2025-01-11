@@ -36,9 +36,9 @@ cluster_addons = {
 }
 eks_managed_node_groups = {
   dev-eks = {
-    min_size       = 1
-    max_size       = 2
-    desired_size   = 1
+    min_size       = 2
+    max_size       = 4
+    desired_size   = 2
     instance_types = ["t3.medium"]
     capacity_type  = "ON_DEMAND"
   }
@@ -93,47 +93,11 @@ sg_rds_egress_with_cidr_blocks = [
   }
 ]
 
-# ###############
-# Security-Group Istio-Gateway-LB variables
-# ###############
-sg-istio-description = "Security Group for Istio"
-sg-istio-name        = "istio-gateway-lb-sg"
-sg_istio_ingress_with_cidr_blocks = [
-  {
-    from_port   = "80"
-    to_port     = "80"
-    protocol    = "tcp"
-    cidr_blocks = "0.0.0.0/0"
-  },
-  {
-    from_port   = "443"
-    to_port     = "443"
-    protocol    = "tcp"
-    cidr_blocks = "0.0.0.0/0"
-  }
-]
-
-sg_istio_egress_with_cidr_blocks = [
-  {
-    description = "Allow all IPv4 traffic"
-    protocol    = "-1"
-    cidr_blocks = "0.0.0.0/0"
-    from_port   = 0
-    to_port     = 0
-  }
-  # {
-  #   description      = "Allow all IPv6 traffic"
-  #   protocol         = "-1"
-  #   ipv6_cidr_blocks = "::/0"
-  #   from_port        = 0
-  #   to_port          = 0
-  # }
-]
 
 # ###############
 # IAM Admin & Developer variables
 # ###############
-admin_usernames     = ["taiwo", "ukeme", "akuracy", "nonso"]
+admin_usernames     = ["t.l", "ukeme", "akuracy", "nonso"]
 developer_usernames = ["geetee", "drintech", "lateef", "kola"]
 
 # ###############
@@ -163,4 +127,28 @@ role_requires_mfa   = false
 # ###############
 assume_eks_admin_iam_role          = "assume-eks-admin-iam-role"
 assume_eks_developer_iam_role      = "assume-eks-developer-iam-role"
+assume_aws_lb_iam_role = "assume-aws-lb-role"
 create_eks_assume_user_role_policy = true
+
+# ###############
+# AWS LB IAM Role
+# ###############
+aws_lb_iam_role_name  = "aws-lb-role"
+
+# ###############
+# AWS LB Controller Pod Identity
+# ###############
+
+aws_lb_controller_pod_identity_name = "aws-lb-pod-identity"
+attach_aws_lb_controller_policy = yes
+association_defaults = {
+  namespace       = "kube-system"
+  service_account = "aws-load-balancer-controller-sa"
+}
+
+association = {
+  cluster = {
+    cluster_name = module.eks.cluster_name
+  }
+}
+

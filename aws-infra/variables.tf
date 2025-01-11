@@ -229,27 +229,6 @@ variable "egress_rules" {
   default = []
 }
 
-# ###############
-# Security-Group Istio variables
-# ###############
-
-variable "sg-istio-description" {
-  type = string
-}
-
-variable "sg-istio-name" {
-  type = string
-}
-
-variable "sg_istio_ingress_with_cidr_blocks" {
-  type    = any
-  default = []
-}
-
-variable "sg_istio_egress_with_cidr_blocks" {
-  type    = any
-  default = []
-}
 
 # ###############
 # IAM Admin & Developer variables
@@ -359,4 +338,38 @@ variable "assume_eks_developer_iam_role" {
 
 variable "create_eks_assume_user_role_policy" {
   type = bool
+}
+
+
+# ###############
+# AWS LB IAM Role
+# ###############
+variable "aws_lb_iam_role_name" {
+  type = string 
+}
+
+variable "assume_aws_lb_iam_role" {
+  type = string 
+}
+ 
+# ###############
+# AWS LB Controller Pod Identity
+# ###############
+variable "aws_lb_controller_pod_identity_name" {
+  type = string
+}
+
+variable "attach_aws_lb_controller_policy" {  
+  type = bool   
+}
+
+variable "association_defaults" {
+  type    = map(any)
+  default = {}
+  
+}
+
+variable "association" {
+  type    = map(any)
+  default = {}
 }

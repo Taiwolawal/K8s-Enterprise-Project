@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "aws-infra-k8s"
+    bucket       = "aws-k8s-infra"
     key          = "infra/state.tfstate"
     region       = "us-east-1"
     encrypt      = true
