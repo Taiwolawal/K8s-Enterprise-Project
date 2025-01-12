@@ -173,39 +173,3 @@ module "allow_assume_eks_developer_iam_policy" {
   )
 }
 
-# IAM Policy for AWS Load Balancer
-module "aws_lb_iam_policy" {
-  source        = "./modules/iam/policy"
-  name          = var.alb_iam_policy_name
-  create_policy = var.create_policy
-  policy        = file("policies/AWSLoadBalancerController.json")
-}
-
-module "aws_lb_iam_role" {
-  source                  = "./modules/iam/role"
-  role_name               = var.aws_lb_iam_role_name
-  create_role             = var.create_assume_role
-  role_requires_mfa       = var.role_requires_mfa
-  custom_role_policy_arns = [module.aws_lb_iam_policy.arn]
-  trusted_role_arns       = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-}
-
-module "allow_assume_aws_lb_iam_policy" {
-  source        = "./modules/iam/policy"
-  name          = var.assume_aws_lb_iam_role
-  create_policy = true
-  policy = templatefile(
-    "${path.root}/template/assume-aws-lb-iam-policy.tpl",
-    {
-      assume_aws_lb_iam_policy = module.aws_lb_iam_role.iam_role_arn
-    }
-  )
-}
-
-module "aws_lb_controller_pod_identity" {
-  source                          = "./modules/pod-identity"
-  name                            = var.aws_lb_controller_pod_identity_name
-  attach_aws_lb_controller_policy = var.attach_aws_lb_controller_policy
-  association_defaults            = var.association_defaults
-  association                     = local.association
-}
