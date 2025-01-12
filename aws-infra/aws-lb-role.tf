@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "aws_lbc" {
 }
 
 resource "aws_iam_role" "aws_lbc" {
-  name               = "${aws_eks_cluster.eks.name}-aws-lbc"
+  name               = "aws-lbc-role"
   assume_role_policy = data.aws_iam_policy_document.aws_lbc.json
 }
 
@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "aws_lbc" {
 }
 
 resource "aws_eks_pod_identity_association" "aws_lbc" {
-  cluster_name    = aws_eks_cluster.eks.name
+  cluster_name    = module.eks.cluster_name
   namespace       = "kube-system"
   service_account = "aws-load-balancer-controller"
   role_arn        = aws_iam_role.aws_lbc.arn

@@ -1,0 +1,31 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: nginx-secret
+spec:
+  selector:
+    matchLabels:
+      app: nginx-web
+  file:
+    matchDirectories:
+    - dir: /
+      recursive: true
+    - dir: /etc/nginx/
+      recursive: true
+      fromSource:
+        - path: /usr/sbin/nginx
+    - dir: /etc/secrets/
+      recursive: true
+      fromSource:
+        - path: /usr/sbin/nginx
+    - dir: /etc/nginx/
+      recursive: true
+      action: Block
+    - dir: /etc/secrets/
+      recursive: true
+      action: Block
+  process:
+    matchPaths:
+    - path: /usr/sbin/nginx
+  action:
+    Allow
