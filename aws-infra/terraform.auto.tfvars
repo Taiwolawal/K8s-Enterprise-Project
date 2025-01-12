@@ -36,9 +36,9 @@ cluster_addons = {
 }
 eks_managed_node_groups = {
   dev-eks = {
-    min_size       = 2
+    min_size       = 1
     max_size       = 4
-    desired_size   = 2
+    desired_size   = 1
     instance_types = ["t3.medium"]
     capacity_type  = "ON_DEMAND"
   }
@@ -97,7 +97,7 @@ sg_rds_egress_with_cidr_blocks = [
 # ###############
 # IAM Admin & Developer variables
 # ###############
-admin_usernames     = ["t.l", "ukeme", "akuracy", "nonso"]
+admin_usernames     = ["kenny", "ukeme", "akuracy", "nonso"]
 developer_usernames = ["geetee", "drintech", "lateef", "kola"]
 
 # ###############
@@ -128,23 +128,7 @@ role_requires_mfa   = false
 # ###############
 assume_eks_admin_iam_role          = "assume-eks-admin-iam-role"
 assume_eks_developer_iam_role      = "assume-eks-developer-iam-role"
-assume_aws_lb_iam_role             = "assume-aws-lb-role"
 create_eks_assume_user_role_policy = true
 
-# ###############
-# AWS LB IAM Role
-# ###############
-aws_lb_iam_role_name = "aws-lb-role"
-
-# ###############
-# AWS LB Controller Pod Identity
-# ###############
-
-aws_lb_controller_pod_identity_name = "aws-lb-pod-identity"
-attach_aws_lb_controller_policy     = true
-association_defaults = {
-  namespace       = "kube-system"
-  service_account = "aws-load-balancer-controller-sa"
-}
 
 
