@@ -1,20 +1,6 @@
 resource "aws_iam_role" "eks" {
-  name = "role-eks-cluster"
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "eks.amazonaws.com"
-      }
-    }
-  ]
-}
-POLICY
+  name               = "role-eks-cluster"
+  assume_role_policy = file("policies/role-eks.json")
 }
 
 resource "aws_iam_role_policy_attachment" "eks" {
@@ -23,22 +9,8 @@ resource "aws_iam_role_policy_attachment" "eks" {
 }
 
 resource "aws_iam_role" "nodes" {
-  name = "role-eks-nodes"
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      }
-    }
-  ]
-}
-POLICY
+  name               = "role-eks-nodes"
+  assume_role_policy = file("policies/role-node.json")
 }
 
 # This policy now includes AssumeRoleForPodIdentity for the Pod Identity Agent also enables worker nodes to interact with EKS and AWS services.
