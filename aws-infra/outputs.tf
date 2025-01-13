@@ -68,15 +68,6 @@ output "develop_iam_role_arn" {
   value       = module.developer_iam_role.iam_role_arn
 }
 
-# output "admin_iam_user_name" {
-#   description = "The user's name"
-#   value       = module.admin_iam_users.iam_user_name
-# }
-
-# output "developer_iam_user_name" {
-#   description = "The user's name"
-#   value       = module.developer_iam_users.iam_user_name
-# }
 
 
 
