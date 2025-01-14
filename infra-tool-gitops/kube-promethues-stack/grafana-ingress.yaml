@@ -4,13 +4,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grafana
+  namespace: monitoring
   annotations:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:145023092615:certificate/88727a73-8fca-4b5a-a049-3d3c22dfb3f6
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/healthcheck-path: /api/health
+    # alb.ingress.kubernetes.io/healthcheck-path: /api/health
+    alb.ingress.kubernetes.io/group.name: shared-alb
 spec:
   ingressClassName: alb
   rules:

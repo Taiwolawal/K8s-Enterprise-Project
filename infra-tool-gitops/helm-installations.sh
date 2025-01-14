@@ -33,6 +33,8 @@ helm install external-dns \
   -n external-dns \
   external-dns/external-dns \
   --set provider=aws \
+  --set txtOwnerId=external-dns \
+  --set policy=sync \ 
   --set serviceMonitor.enabled=true \
   --set serviceMonitor.additionalLabels.release=prometheus \
   --set serviceAccount.create=false \
