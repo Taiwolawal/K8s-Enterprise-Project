@@ -21,7 +21,7 @@ helm install aws-load-balancer-controller \
   --set serviceMonitor.enabled=true \
   --set serviceMonitor.additionalLabels.release=prometheus \
   --set serviceAccount.create=false \
-  --set serviceAccount.name=aws-load-balancer-controller \
+  --set serviceAccount.name=aws-load-balancer-controller-sa \
   --version 1.11.0
 
 
