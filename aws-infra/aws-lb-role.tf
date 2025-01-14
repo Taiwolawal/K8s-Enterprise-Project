@@ -29,6 +29,13 @@ resource "aws_iam_role_policy_attachment" "aws_lbc" {
   role       = aws_iam_role.aws_lbc.name
 }
 
+resource "kubernetes_service_account" "cluster_autoscaler" {
+  metadata {
+    name      = "aws-load-balancer-controller"
+    namespace = "kube-system"
+  }
+}
+
 resource "aws_eks_pod_identity_association" "aws_lbc" {
   cluster_name    = module.eks.cluster_name
   namespace       = "kube-system"

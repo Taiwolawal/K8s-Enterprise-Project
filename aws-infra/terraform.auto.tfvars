@@ -112,7 +112,7 @@ create_group             = true
 # ###############
 admin_iam_policy_name     = "allow-eks-access-admin-policy"
 developer_iam_policy_name = "allow-eks-access-developer-policy"
-alb_iam_policy_name       = "allow-alb-policy"
+# alb_iam_policy_name       = "allow-alb-policy"
 create_policy             = true
 
 # ###############
