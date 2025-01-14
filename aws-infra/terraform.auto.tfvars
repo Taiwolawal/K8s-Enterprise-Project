@@ -97,7 +97,7 @@ sg_rds_egress_with_cidr_blocks = [
 # ###############
 # IAM Admin & Developer variables
 # ###############
-admin_usernames     = ["kenny", "ukeme", "akuracy", "nonso"]
+admin_usernames     = ["t.l", "ukeme", "akuracy", "nonso"]
 developer_usernames = ["geetee", "drintech", "lateef", "kola"]
 
 # ###############
@@ -112,7 +112,6 @@ create_group             = true
 # ###############
 admin_iam_policy_name     = "allow-eks-access-admin-policy"
 developer_iam_policy_name = "allow-eks-access-developer-policy"
-# alb_iam_policy_name       = "allow-alb-policy"
 create_policy             = true
 
 # ###############

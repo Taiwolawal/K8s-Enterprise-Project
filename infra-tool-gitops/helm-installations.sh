@@ -71,5 +71,7 @@ helm install external-secrets  \
   external-secrets/external-secrets \
   --set serviceMonitor.enabled=true \
   --set serviceMonitor.additionalLabels.release=prometheus \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=external-secret-sa \
   --version 0.12.1
 

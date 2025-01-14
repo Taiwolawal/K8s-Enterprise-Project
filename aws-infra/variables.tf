@@ -299,9 +299,7 @@ variable "developer_iam_policy_name" {
   type = string
 }
 
-variable "alb_iam_policy_name" {
-  type = string
-}
+
 
 variable "create_policy" {
   type = bool

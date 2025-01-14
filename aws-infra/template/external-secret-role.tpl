@@ -5,7 +5,7 @@
       "Action": ["sts:AssumeRoleWithWebIdentity"],
       "Effect": "Allow",
       "Principal": {
-          "Federated": "${eks_provider_arn}"
+          "Federated": "${eks_oid_provider_arn}"
         }
     }
   ]
