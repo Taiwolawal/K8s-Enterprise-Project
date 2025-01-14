@@ -7,7 +7,7 @@ helm repo update prometheus-community
 helm install prometheus \
   prometheus-community/kube-prometheus-stack \
   -n monitoring --create-namespace \
-  --version 26.1.0
+  --version 68.1.0
 
 
 # AWS Load Balancer Controller

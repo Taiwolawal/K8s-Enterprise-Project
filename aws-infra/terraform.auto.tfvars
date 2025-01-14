@@ -36,9 +36,9 @@ cluster_addons = {
 }
 eks_managed_node_groups = {
   dev-eks = {
-    min_size       = 1
+    min_size       = 3
     max_size       = 4
-    desired_size   = 1
+    desired_size   = 3
     instance_types = ["t3.medium"]
     capacity_type  = "ON_DEMAND"
   }

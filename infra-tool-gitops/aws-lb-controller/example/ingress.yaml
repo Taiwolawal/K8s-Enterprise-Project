@@ -15,7 +15,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: grafana.eazydevops.online
+    - host: test.eazydevops.online
       http:
         paths:
           - path: /
