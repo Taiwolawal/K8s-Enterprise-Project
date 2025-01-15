@@ -77,3 +77,12 @@ helm install external-secrets  \
   --set serviceAccount.name=external-secret-sa \
   --version 0.12.1
 
+# Gatekeeper (Policy as Code)
+echo "Installing OPA Gatekeeper..."
+helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
+helm repo update gatekeeper
+helm install gatekeeper \
+  -n gatekeeper --create-namespace \
+  gatekeeper/gatekeeper \
+  --version 3.19.0-beta.1
+# Ensure you run constraintemplate before running contraints.
