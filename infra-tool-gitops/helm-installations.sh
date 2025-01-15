@@ -85,4 +85,33 @@ helm install gatekeeper \
   -n gatekeeper --create-namespace \
   gatekeeper/gatekeeper \
   --version 3.19.0-beta.1
-# Ensure you run constraintemplate before running contraints.
+# NOTE: Ensure you run constraintemplate before running contraints.
+
+
+# ElasticSearch (Ensure you have deployed storage class)
+echo "Installing ElasticSearch..."
+helm repo add elastic https://helm.elastic.co
+helm repo update elastic
+helm install elasticsearch \
+  -n efk --create-namespace \
+  elastic/elasticsearch \
+  --set replicas=3 \
+  --set volumeClaimTemplate.storageClassName=ebs-gp3 \
+  --set volumeClaimTemplate.resources.requests.storage=5Gi \
+  --set persistence.labels.enabled=true \
+  --set persistence.labels.customLabel=elasticsearch-pv \
+  --version 8.5.1
+
+
+# Kibana (Ensure you use the same version with ElasticSearch)
+echo "Installing Kibana..."
+helm install kibana \
+  -n efk \
+  elastic/kibana \
+  --version 8.5.1
+
+
+
+
+ 
+
