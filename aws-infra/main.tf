@@ -32,12 +32,7 @@ module "eks" {
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
   access_entries                           = local.access_entries
-  node_security_group_additional_rules     = local.node_security_group_rules
-  depends_on = [
-    aws_iam_role_policy_attachment.eks,
-    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
-    aws_iam_role_policy_attachment.amazon_eks_cni_policy,
-  ]
+node_security_group_additional_rules     = local.node_security_group_rules
 }
 
 module "rds" {
@@ -171,5 +166,17 @@ module "allow_assume_eks_developer_iam_policy" {
       assume_eks_developer_iam_policy = module.developer_iam_role.iam_role_arn
     }
   )
+}
+
+resource "random_string" "random" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+module "s3_bucket_velero" {
+  source        = "./modules/s3"
+  bucket        = var.velero_bucket
+  force_destroy = var.force_destroy_s3
 }
 

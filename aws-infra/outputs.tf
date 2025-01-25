@@ -68,6 +68,16 @@ output "develop_iam_role_arn" {
   value       = module.developer_iam_role.iam_role_arn
 }
 
+output "velero_bucket_name" {
+  description = "The name of the velero bucket"
+  value       = module.s3_bucket_velero.velero_bucket_name
+}
+
+output "velero_bucket_arn" {
+  description = "The ARN of the velero bucket"
+  value       = module.s3_bucket_velero.velero_bucket_arn
+}
+
 
 
 

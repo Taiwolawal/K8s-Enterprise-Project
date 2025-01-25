@@ -343,3 +343,14 @@ variable "create_eks_assume_user_role_policy" {
 }
 
 
+# ###############
+# S3 variables
+# ###############
+variable "velero_bucket" {
+  type = string
+}
+
+variable "force_destroy_s3" {
+  type = bool
+}
+

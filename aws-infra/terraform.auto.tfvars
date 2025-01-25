@@ -129,5 +129,10 @@ assume_eks_admin_iam_role          = "assume-eks-admin-iam-role"
 assume_eks_developer_iam_role      = "assume-eks-developer-iam-role"
 create_eks_assume_user_role_policy = true
 
+# ###############
+# S3 variables
+# ###############
+velero_bucket    = "velero-k8s-backup-bucket-azef11"
+force_destroy_s3 = true
 
 
