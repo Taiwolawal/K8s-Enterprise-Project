@@ -176,7 +176,7 @@ resource "random_string" "random" {
 
 module "s3_bucket_velero" {
   source        = "./modules/s3"
-  bucket        = var.velero_bucket
+  bucket        = "${var.velero_bucket}-${random_string.random.result}"
   force_destroy = var.force_destroy_s3
 }
 

@@ -23,7 +23,7 @@ SERVICE_ACCOUNT_VELERO="velero-sa"
 
 # AWS
 PROVIDER="aws"
-VELERO_BUCKET_NAME="velero-k8s-backup-bucket-azef11"
+VELERO_BUCKET_NAME="velero-k8s-backup-bucket-azef11-mn92qwy4"
 REGION="us-east-1"
 VELERO_PLUGIN_IMAGE="velero/velero-plugin-for-aws:v1.10.0"
 
@@ -62,7 +62,7 @@ helm install external-dns \
   external-dns/external-dns \
   --set provider=${PROVIDER} \
   --set txtOwnerId=external-dns \
-  --set policy=sync \ 
+  --set policy=sync \
   --set serviceMonitor.enabled=true \
   --set serviceMonitor.additionalLabels.release=prometheus \
   --set serviceAccount.create=false \
@@ -70,14 +70,14 @@ helm install external-dns \
   --version ${EXTERNAL_DNS_VERSION}
 
 
-# KuebeArmor
+# KubeArmor
 echo "Installing KuebeArmor..."
 helm repo add kubearmor https://kubearmor.github.io/charts
 helm repo update kubearmor
 helm install kubearmor \
   -n kubearmor --create-namespace \
-   kubearmor/kubearmor \
-   --version ${KUBEARMOR_VERSION}
+  kubearmor/kubearmor \
+  --version ${KUBEARMOR_VERSION}
 
 
 # Metrics-Server
@@ -117,35 +117,35 @@ helm install gatekeeper \
 
 
 # ElasticSearch (Ensure you have deployed storage class)
-echo "Installing ElasticSearch..."
-helm repo add elastic https://helm.elastic.co
-helm repo update elastic
-helm install elasticsearch \
-  -n efk --create-namespace \
-  elastic/elasticsearch \
-  --set replicas=3 \
-  --set volumeClaimTemplate.storageClassName=ebs-gp3 \
-  --set volumeClaimTemplate.resources.requests.storage=5Gi \
-  --set persistence.labels.enabled=true \
-  --set persistence.labels.customLabel=elasticsearch-pv \
-  --version ${ELASTIC_SEARCH_VERSION}
+# echo "Installing ElasticSearch..."
+# helm repo add elastic https://helm.elastic.co
+# helm repo update elastic
+# helm install elasticsearch \
+#   -n efk --create-namespace \
+#   elastic/elasticsearch \
+#   --set replicas=3 \
+#   --set volumeClaimTemplate.storageClassName=ebs-gp3 \
+#   --set volumeClaimTemplate.resources.requests.storage=5Gi \
+#   --set persistence.labels.enabled=true \
+#   --set persistence.labels.customLabel=elasticsearch-pv \
+#   --version ${ELASTIC_SEARCH_VERSION}
 
 
 # Kibana (Ensure you use the same version with ElasticSearch)
-echo "Installing Kibana..."
-helm install kibana \
-  -n efk \
-  elastic/kibana \
-  --version ${KIBANA_VERSION}
+# echo "Installing Kibana..."
+# helm install kibana \
+#   -n efk \
+#   elastic/kibana \
+#   --version ${KIBANA_VERSION}
 
 
 # Velero (For Cluster Backup and Restore)
 echo "Installing Velero..."
-helm repo add velero https://charts.velero.io/
-helm repo update velero
+helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts/
+helm repo update vmware-tanzu
 helm install velero \
   -n velero \
-  velero/velero \
+  vmware-tanzu/velero \
   --set serviceMonitor.enabled=true \
   --set serviceMonitor.additionalLabels.release=prometheus \
   --set initContainers[0].name=velero-plugin-for-aws \
@@ -160,11 +160,18 @@ helm install velero \
   --set configuration.volumeSnapshotLocation[0].config.region=${REGION} \
   --set serviceAccount.server.create=false \
   --set serviceAccount.server.name=${SERVICE_ACCOUNT_VELERO} \
-  --set credentials.useSecret=false
+  --set credentials.useSecret=false \
   --version ${VELERO_VERSION}
 
 
-
-
- 
-
+# Uninstall Helm Charts
+helm uninstall prometheus -n monitoring
+helm uninstall aws-load-balancer-controller -n kube-system
+helm uninstall kubearmor -n kubearmor
+helm uninstall external-secrets -n external-secrets
+helm uninstall gatekeeper -n gatekeeper
+helm uninstall velero -n velero
+helm uninstall metrics-server -n metrics-server
+helm uninstall external-dns -n external-dns
+helm uninstall kibana -n efk
+helm uninstall elasticsearch -n efk 
