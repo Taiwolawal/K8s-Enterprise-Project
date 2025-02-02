@@ -96,8 +96,8 @@ helm install metrics-server \
 echo "Installing External Secrets..."
 helm repo add external-secrets https://charts.external-secrets.io
 helm repo update external-secrets 
-helm install external-secrets  \
-  -n external-secrets --create-namespace \
+helm install external-secret \
+  -n external-secret \
   external-secrets/external-secrets \
   --set serviceMonitor.enabled=true \
   --set serviceMonitor.additionalLabels.release=prometheus \
@@ -168,7 +168,7 @@ helm install velero \
 helm uninstall prometheus -n monitoring
 helm uninstall aws-load-balancer-controller -n kube-system
 helm uninstall kubearmor -n kubearmor
-helm uninstall external-secrets -n external-secrets
+helm uninstall external-secret -n external-secret
 helm uninstall gatekeeper -n gatekeeper
 helm uninstall velero -n velero
 helm uninstall metrics-server -n metrics-server

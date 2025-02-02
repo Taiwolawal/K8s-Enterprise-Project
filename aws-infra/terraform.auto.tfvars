@@ -132,7 +132,7 @@ create_eks_assume_user_role_policy = true
 # ###############
 # S3 variables
 # ###############
-velero_bucket    = "velero-k8s-backup-bucket-azef11"
+velero_bucket    = "velero-k8s-backup-bucket"
 force_destroy_s3 = true
 
 
