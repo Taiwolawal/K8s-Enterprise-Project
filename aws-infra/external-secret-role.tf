@@ -1,5 +1,5 @@
 resource "aws_iam_role" "external_secret" {
-  name               = "external-secret-role"
+  name = "external-secret-role"
   assume_role_policy = templatefile(
     "${path.root}/template/external-secret-role.tpl",
     {

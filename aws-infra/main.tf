@@ -32,7 +32,7 @@ module "eks" {
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
   access_entries                           = local.access_entries
-node_security_group_additional_rules     = local.node_security_group_rules
+  node_security_group_additional_rules     = local.node_security_group_rules
 }
 
 module "rds" {

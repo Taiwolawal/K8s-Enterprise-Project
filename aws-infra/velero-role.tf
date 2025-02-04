@@ -26,7 +26,7 @@ resource "aws_iam_policy" "velero" {
       velero_s3_bucket = module.s3_bucket_velero.velero_bucket_arn
     }
   )
-  name   = "Velero"
+  name = "Velero"
 }
 
 resource "aws_iam_role_policy_attachment" "velero" {
