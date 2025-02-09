@@ -41,6 +41,7 @@ resource "kubernetes_namespace" "velero" {
 }
 
 resource "kubernetes_service_account" "velero" {
+  depends_on = [kubernetes_namespace.velero]
   metadata {
     name      = "velero-sa"
     namespace = "velero"
@@ -48,6 +49,7 @@ resource "kubernetes_service_account" "velero" {
 }
 
 resource "aws_eks_pod_identity_association" "velero" {
+  depends_on      = [kubernetes_service_account.velero, ]
   cluster_name    = module.eks.cluster_name
   namespace       = "velero"
   service_account = "velero-sa"

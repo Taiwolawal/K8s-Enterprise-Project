@@ -37,6 +37,7 @@ resource "kubernetes_service_account" "aws_lbc" {
 }
 
 resource "aws_eks_pod_identity_association" "aws_lbc" {
+  depends_on      = [kubernetes_service_account.aws_lbc, aws_iam_role.aws_lbc]
   cluster_name    = module.eks.cluster_name
   namespace       = "kube-system"
   service_account = "aws-load-balancer-controller-sa"

@@ -5,7 +5,6 @@ data "aws_iam_policy_document" "external_dns" {
       type        = "Service"
       identifiers = ["pods.eks.amazonaws.com"]
     }
-
     actions = [
       "sts:AssumeRole",
       "sts:TagSession"

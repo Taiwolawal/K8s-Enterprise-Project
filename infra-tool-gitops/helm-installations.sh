@@ -14,6 +14,7 @@ OPA_GATEKEEPER_VERSION="3.19.0-beta.1"
 ELASTIC_SEARCH_VERSION="8.5.1"
 KIBANA_VERSION="8.5.1"
 VELERO_VERSION="8.3.0"
+ISTIO_VERSION="1.24.2"
 
 # Service Accounts
 SERVICE_ACCOUNT_ALB_CONTROLLER="aws-load-balancer-controller-sa"
@@ -23,7 +24,7 @@ SERVICE_ACCOUNT_VELERO="velero-sa"
 
 # AWS
 PROVIDER="aws"
-VELERO_BUCKET_NAME="velero-k8s-backup-bucket-azef11-mn92qwy4"
+VELERO_BUCKET_NAME="velero-k8s-backup-bucket-7oy6by3a"
 REGION="us-east-1"
 VELERO_PLUGIN_IMAGE="velero/velero-plugin-for-aws:v1.10.0"
 
@@ -71,7 +72,7 @@ helm install external-dns \
 
 
 # KubeArmor
-echo "Installing KuebeArmor..."
+echo "Installing KubeArmor..."
 helm repo add kubearmor https://kubearmor.github.io/charts
 helm repo update kubearmor
 helm install kubearmor \
@@ -106,6 +107,7 @@ helm install external-secret \
   --version ${EXTERNAL_SECRET_VERSION}
 
 # Gatekeeper (Policy as Code)
+# NOTE: Ensure you run constraintemplate before running contraints.
 echo "Installing OPA Gatekeeper..."
 helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
 helm repo update gatekeeper
@@ -113,7 +115,7 @@ helm install gatekeeper \
   -n gatekeeper --create-namespace \
   gatekeeper/gatekeeper \
   --version ${OPA_GATEKEEPER_VERSION}
-# NOTE: Ensure you run constraintemplate before running contraints.
+
 
 
 # ElasticSearch (Ensure you have deployed storage class)
@@ -163,6 +165,21 @@ helm install velero \
   --set credentials.useSecret=false \
   --version ${VELERO_VERSION}
 
+# Istio-Base
+echo "Installing Istio-Base ..."
+helm repo add istio  https://istio-release.storage.googleapis.com/charts
+helm repo update istio
+helm install istio-base \
+  -n istio-system --create-namespace \
+  istio/base \
+  --version ${ISTIO_VERSION}
+
+# Istiod
+echo "Installing Istiod ..."
+helm install istiod \
+  -n istio-system \
+  istio/istiod \
+  --version ${ISTIO_VERSION}
 
 # Uninstall Helm Charts
 helm uninstall prometheus -n monitoring
@@ -175,3 +192,5 @@ helm uninstall metrics-server -n metrics-server
 helm uninstall external-dns -n external-dns
 helm uninstall kibana -n efk
 helm uninstall elasticsearch -n efk 
+helm uninstall istio -n istio-system
+helm uninstall istiod -n istio-system
